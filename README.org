@@ -1,0 +1,5 @@
+-*- mode: org; coding: utf-8; -*-
+
+#+TITLE: Scheme-gl
+
+Playing around with OpenGL in Scheme using Chickadee and Guile-Opengl.
