@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<world>
+  <sector id="1">
+    <triangle>
+      <vertex x="0" y="0" z="0" u="0" v="0"/>
+      <vertex x="5" y="0" z="0" u="128" v="0"/>
+      <vertex x="0" y="3" z="0" u="0" v="128"/>
+    </triangle>
+    <triangle>
+      <vertex x="0" y="3" z="0" u="0" v="128"/>
+      <vertex x="5" y="0" z="0" u="128" v="0"/>
+      <vertex x="5" y="3" z="0" u="128" v="128"/>
+    </triangle>
+    <triangle>
+      <vertex x="0" y="3" z="0" u="0" v="0"/>
+      <vertex x="5" y="3" z="0" u="128" v="0"/>
+      <vertex x="2.5" y="5" z="0" u="64" v="64"/>
+    </triangle>
+  </sector>
+</world>
