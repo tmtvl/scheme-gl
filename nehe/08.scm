@@ -22,8 +22,10 @@
 (define height 480)
 
 (define render-light #f)
+(define blend #f)
 (define l-pressed #f)
 (define f-pressed #f)
+(define b-pressed #f)
 
 (define xrot 0.0)
 (define yrot 0.0)
@@ -81,6 +83,26 @@
 	   (quit))
 	  ((keyboard-down-event? ev)
 	   (case (keyboard-event-key ev)
+	     ((b) (if (not b-pressed)
+		      (begin
+			(set! b-pressed #t)
+			(set! blend
+			  (not blend))
+
+			(if blend
+			    (begin
+			      (gl-enable (enable-cap blend))
+			      (gl-disable (enable-cap depth-test)))
+			    (begin
+			      (gl-disable (enable-cap blend))
+			      (gl-enable (enable-cap depth-test)))))))
+	     ((f) (if (not f-pressed)
+		     (begin
+		       (set! f-pressed #t)
+		       (set! mfilter
+			 (if (= mfilter 2)
+			     0
+			     (+ mfilter 1))))))
 	     ((l) (if (not l-pressed)
 		     (begin
 		       (set! l-pressed #t)
@@ -90,13 +112,6 @@
 		       (if render-light
 			   (gl-enable (enable-cap lighting))
 			   (gl-disable (enable-cap lighting))))))
-	     ((f) (if (not f-pressed)
-		     (begin
-		       (set! f-pressed #t)
-		       (set! mfilter
-			 (if (= mfilter 2)
-			     0
-			     (+ mfilter 1))))))
 	     ((page-up) (set! z (- z 0.02)))
 	     ((page-down) (set! z (+ z 0.02)))
 	     ((right) (set! yspeed (+ yspeed 0.01)))
@@ -105,8 +120,9 @@
 	     ((down) (set! xspeed (- xspeed 0.01)))))
 	  ((keyboard-up-event? ev)
 	   (case (keyboard-event-key ev)
-	     ((l) (set! l-pressed #f))
-	     ((f) (set! f-pressed #f)))))))
+	     ((b) (set! b-pressed #f))
+	     ((f) (set! f-pressed #f))
+	     ((l) (set! l-pressed #f)))))))
 
 (define (render alpha)
   (gl-clear (logior (clear-buffer-mask color-buffer)
@@ -226,7 +242,12 @@
 	     (light-parameter position)
 	     light-position)
 
-  (gl-enable (enable-cap light1)))
+  (gl-enable (enable-cap light1))
+
+  (gl-color 1.0 1.0 1.0 0.5)
+
+  (set-gl-blend-function (blending-factor-src src-alpha)
+			 (blending-factor-dest one)))
 
 (define (init)
   (sdl-init)
@@ -243,7 +264,7 @@
 
   (gl-resize width height)
 
-  (let ((image (load-image "color_blindness.png"))
+  (let ((image (load-image "transp.png"))
 	(tx-target (texture-target texture-2d)))
     (set! textures
       (map
@@ -277,7 +298,7 @@
 					0 3
 					(surface-width image)
 					(surface-height image)
-					0 (pixel-format rgb)
+					0 (pixel-format rgba)
 					(pixel-type unsigned-byte)
 					(surface-pixels image))))
 	     (list (lambda ()
@@ -285,7 +306,7 @@
 					3
 					(surface-width image)
 					(surface-height image)
-					(pixel-format rgb)
+					(pixel-format rgba)
 					(pixel-type unsigned-byte)
 					(scm->pointer
 					 (surface-pixels image))))))))
